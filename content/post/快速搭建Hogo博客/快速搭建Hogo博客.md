@@ -9,6 +9,7 @@ tags:
   - '博客'
 categories: 
   - '技术笔记'
+slug: "hugo-blog-setup-guide"
 ---
 
 > **声明**：本文由 AI 助手（GitHub Copilot）根据个人博客搭建经验编写，主要用于记录和分享基于 hugo-theme-stack-starter 快速搭建博客的技术流程。
