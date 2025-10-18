@@ -1,11 +1,15 @@
-+++
-date = '2025-10-18T13:13:23+08:00'
-draft = false
-title = '基于 hugo-theme-stack-starter 快速搭建 Hugo 博客'
-description = '使用 hugo-theme-stack-starter 模板快速搭建个人博客并部署到 GitHub Pages 的完整指南'
-tags = ['Hugo', 'GitHub Pages', '博客']
-categories = ['技术笔记']
-+++
+---
+date: '2025-10-18T13:13:23+08:00'
+draft: false
+title: '基于 hugo-theme-stack-starter 快速搭建 Hugo 博客'
+description: '使用 hugo-theme-stack-starter 模板快速搭建个人博客并部署到 GitHub Pages 的完整指南'
+tags: 
+  - 'Hugo'
+  - 'GitHub Pages'
+  - '博客'
+categories: 
+  - '技术笔记'
+---
 
 > **声明**：本文由 AI 助手（GitHub Copilot）根据个人博客搭建经验编写，主要用于记录和分享基于 hugo-theme-stack-starter 快速搭建博客的技术流程。
 
