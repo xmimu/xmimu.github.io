@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>博客 on 梨梨的个人博客</title><link>https://xmimu.github.io/tags/%E5%8D%9A%E5%AE%A2/</link><description>Recent content in 博客 on 梨梨的个人博客</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 18 Oct 2025 13:13:23 +0800</lastBuildDate><atom:link href="https://xmimu.github.io/tags/%E5%8D%9A%E5%AE%A2/index.xml" rel="self" type="application/rss+xml"/><item><title>基于 hugo-theme-stack-starter 快速搭建 Hugo 博客</title><link>https://xmimu.github.io/p/hugo-blog-setup-guide/</link><pubDate>Sat, 18 Oct 2025 13:13:23 +0800</pubDate><guid>https://xmimu.github.io/p/hugo-blog-setup-guide/</guid><description>&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;声明&lt;/strong&gt;：本文由 AI 助手（GitHub Copilot）根据个人博客搭建经验编写，主要用于记录和分享基于 hugo-theme-stack-starter 快速搭建博客的技术流程。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;本文记录了使用 hugo-theme-stack-starter 模板快速搭建个人博客并部署到 GitHub Pages 的完整流程，包括模板使用、配置定制、内容创建和自动化部署等内容。&lt;/p&gt;
+&lt;h2 id="1-基于-hugo-theme-stack-starter-创建项目"&gt;1. 基于 hugo-theme-stack-starter 创建项目
+&lt;/h2&gt;&lt;p&gt;使用 &lt;a class="link" href="https://github.com/CaiJimmy/hugo-theme-stack-starter" target="_blank" rel="noopener"
+&gt;hugo-theme-stack-starter&lt;/a&gt; 模板创建项目，这是最快速的方式：&lt;/p&gt;
+&lt;h3 id="方法一使用-github-template--codespace推荐"&gt;方法一：使用 GitHub Template + Codespace（推荐）
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;访问 &lt;a class="link" href="https://github.com/CaiJimmy/hugo-theme-stack-starter" target="_blank" rel="noopener"
+&gt;hugo-theme-stack-starter&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;点击 &amp;ldquo;Use this template&amp;rdquo; -&amp;gt; &amp;ldquo;Create a new repository&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;将仓库命名为 &lt;code&gt;&amp;lt;用户名&amp;gt;.github.io&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;创建完成后，点击 &amp;ldquo;Create codespace&amp;rdquo; 创建 GitHub Codespace&lt;/li&gt;
+&lt;li&gt;Codespace 已预装 Hugo extended，直接运行 &lt;code&gt;hugo server&lt;/code&gt; 即可预览&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="方法二本地开发"&gt;方法二：本地开发
+&lt;/h3&gt;&lt;p&gt;如果不想使用 Codespace，可以克隆到本地开发。&lt;strong&gt;需要确保本地已安装 Git、Go 和 Hugo extended&lt;/strong&gt;。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git clone https://github.com/&amp;lt;用户名&amp;gt;/&amp;lt;用户名&amp;gt;.github.io.git
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; &amp;lt;用户名&amp;gt;.github.io
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;注意&lt;/strong&gt;：hugo-theme-stack-starter 使用 Hugo Modules 功能加载主题，不再使用传统的子模块方式。&lt;/p&gt;
+&lt;h2 id="2-配置网站"&gt;2. 配置网站
+&lt;/h2&gt;&lt;p&gt;hugo-theme-stack-starter 已经包含了完整的配置结构，主要配置文件位于 &lt;code&gt;config/_default/&lt;/code&gt; 目录：&lt;/p&gt;
+&lt;h3 id="主要配置文件"&gt;主要配置文件
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;config.toml&lt;/code&gt; - 基础站点配置&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;params.toml&lt;/code&gt; - 主题参数配置&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;menu.toml&lt;/code&gt; - 菜单配置&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;languages.toml&lt;/code&gt; - 多语言配置&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;编辑 &lt;code&gt;config/_default/config.toml&lt;/code&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;baseurl&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;https://&amp;lt;用户名&amp;gt;.github.io&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;languageCode&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;zh-cn&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;title&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;个人博客&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;defaultContentLanguage&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;zh-cn&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;hasCJKLanguage&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="自定义配置"&gt;自定义配置
+&lt;/h3&gt;&lt;p&gt;根据需要修改 &lt;code&gt;config/_default/params.toml&lt;/code&gt; 中的参数，如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;网站描述、关键词&lt;/li&gt;
+&lt;li&gt;社交媒体链接&lt;/li&gt;
+&lt;li&gt;评论系统配置&lt;/li&gt;
+&lt;li&gt;搜索功能等&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="3-创建第一篇文章"&gt;3. 创建第一篇文章
+&lt;/h2&gt;&lt;p&gt;stack-starter 已经包含了示例文章，可以参考 &lt;code&gt;content/post/&lt;/code&gt; 目录下的示例。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 使用 Hugo 命令创建新文章&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo new post/my-first-post/index.md
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Stack 主题支持 Page Bundle 结构，推荐使用：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;content/post/my-first-post/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;├── index.md # 文章内容
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;├── cover.jpg # 封面图片
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;└── images/ # 文章图片
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; └── example.png
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;文章前置元数据示例：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="l"&gt;+++&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="l"&gt;title = &amp;#34;文章标题&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="l"&gt;description = &amp;#34;文章简短描述&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="l"&gt;date = 2025-10-18T10:00:00+08:00&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="l"&gt;image = &amp;#34;cover.jpg&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="l"&gt;math = false&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="l"&gt;license = false&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="l"&gt;hidden = false&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="l"&gt;comments = true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="l"&gt;draft = false&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="l"&gt;tags = [&amp;#34;标签1&amp;#34;, &amp;#34;标签2&amp;#34;]&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="l"&gt;categories = [&amp;#34;分类&amp;#34;]&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="l"&gt;+++&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="4-本地预览"&gt;4. 本地预览
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 不包含草稿&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo server
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 包含草稿&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo server -D
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;访问 http://localhost:1313 查看网站。&lt;/p&gt;
+&lt;h2 id="5-部署到-github-pages"&gt;5. 部署到 GitHub Pages
+&lt;/h2&gt;&lt;h3 id="51-github-仓库配置"&gt;5.1 GitHub 仓库配置
+&lt;/h3&gt;&lt;p&gt;如果使用 GitHub Template 创建，仓库已经存在。如果是手动创建，需要：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;创建名为 &lt;code&gt;&amp;lt;用户名&amp;gt;.github.io&lt;/code&gt; 的仓库，例如 &lt;code&gt;xmimu.github.io&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;将本地项目推送到 GitHub&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="52-配置-github-pages"&gt;5.2 配置 GitHub Pages
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;重要&lt;/strong&gt;：需要将构建分支从 &lt;code&gt;master&lt;/code&gt; 改为 &lt;code&gt;gh-pages&lt;/code&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;在 GitHub 仓库中，点击 Settings -&amp;gt; Pages&lt;/li&gt;
+&lt;li&gt;Source 选择 &amp;ldquo;Deploy from a branch&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;Branch 选择 &amp;ldquo;gh-pages&amp;rdquo; / &amp;ldquo;/ (root)&amp;rdquo;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="53-github-actions-自动部署"&gt;5.3 GitHub Actions 自动部署
+&lt;/h3&gt;&lt;p&gt;hugo-theme-stack-starter 已经包含了完整的 GitHub Actions 配置，包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;自动构建和部署到 &lt;code&gt;gh-pages&lt;/code&gt; 分支&lt;/li&gt;
+&lt;li&gt;每日自动更新主题的定时任务&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="54-推送代码"&gt;5.4 推送代码
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 提交并推送代码&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git add .
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git commit -m &lt;span class="s2"&gt;&amp;#34;初始化博客&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git push origin master
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="55-自动部署流程"&gt;5.5 自动部署流程
+&lt;/h3&gt;&lt;p&gt;推送到 &lt;code&gt;master&lt;/code&gt; 分支后：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;GitHub Actions 自动触发&lt;/li&gt;
+&lt;li&gt;构建 Hugo 站点&lt;/li&gt;
+&lt;li&gt;部署到 &lt;code&gt;gh-pages&lt;/code&gt; 分支&lt;/li&gt;
+&lt;li&gt;GitHub Pages 自动发布&lt;/li&gt;
+&lt;li&gt;通过 &lt;code&gt;https://&amp;lt;用户名&amp;gt;.github.io&lt;/code&gt; 访问&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="6-常见问题解决"&gt;6. 常见问题解决
+&lt;/h2&gt;&lt;h3 id="61-主题更新"&gt;6.1 主题更新
+&lt;/h3&gt;&lt;p&gt;hugo-theme-stack-starter 使用 Hugo Modules，更新主题方式：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 手动更新主题&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo mod get -u github.com/CaiJimmy/hugo-theme-stack/v3
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo mod tidy
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;注意&lt;/strong&gt;：当前配置使用 &lt;code&gt;v3&lt;/code&gt; 版本。如果发布 &lt;code&gt;v4&lt;/code&gt; 或更高版本，需要手动修改 &lt;code&gt;config/module.toml&lt;/code&gt; 文件。&lt;/p&gt;
+&lt;h3 id="62-hugo-无法显示内容"&gt;6.2 Hugo 无法显示内容
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;检查文章的 &lt;code&gt;draft&lt;/code&gt; 状态是否为 &lt;code&gt;false&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;使用 &lt;code&gt;hugo server -D&lt;/code&gt; 命令可以预览草稿内容&lt;/li&gt;
+&lt;li&gt;确认配置文件中的路径设置正确&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="63-github-pages-配置问题"&gt;6.3 GitHub Pages 配置问题
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;确保 Pages 设置中 Branch 选择的是 &lt;code&gt;gh-pages&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;检查 Actions 日志查看具体错误&lt;/li&gt;
+&lt;li&gt;确认 Hugo 版本兼容性&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="64-中文字符问题"&gt;6.4 中文字符问题
+&lt;/h3&gt;&lt;p&gt;确保 &lt;code&gt;config/_default/config.toml&lt;/code&gt; 中设置了：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;languageCode&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;zh-cn&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;defaultContentLanguage&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;zh-cn&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;hasCJKLanguage&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="7-最佳实践"&gt;7. 最佳实践
+&lt;/h2&gt;&lt;h3 id="71-文章组织"&gt;7.1 文章组织
+&lt;/h3&gt;&lt;p&gt;Stack 主题推荐使用 Page Bundle 结构：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;content/post/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;└── my-article/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ├── index.md # 文章内容
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ├── cover.jpg # 封面图片
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; └── images/ # 其他图片
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; └── diagram.png
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="72-配置管理"&gt;7.2 配置管理
+&lt;/h3&gt;&lt;p&gt;hugo-theme-stack-starter 提供了模块化配置：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;config/_default/&lt;/code&gt; - 默认配置&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;config/production/&lt;/code&gt; - 生产环境配置&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;config/development/&lt;/code&gt; - 开发环境配置&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="73-内容管理"&gt;7.3 内容管理
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;使用 &lt;code&gt;categories&lt;/code&gt; 和 &lt;code&gt;tags&lt;/code&gt; 组织文章&lt;/li&gt;
+&lt;li&gt;利用 &lt;code&gt;image&lt;/code&gt; 字段设置文章封面&lt;/li&gt;
+&lt;li&gt;合理使用 &lt;code&gt;description&lt;/code&gt; 提供文章摘要&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="74-主题定制"&gt;7.4 主题定制
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;自定义样式：修改 &lt;code&gt;assets/scss/custom.scss&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;自定义布局：在 &lt;code&gt;layouts/&lt;/code&gt; 目录下覆盖主题模板&lt;/li&gt;
+&lt;li&gt;添加短代码：在 &lt;code&gt;layouts/shortcodes/&lt;/code&gt; 目录下创建&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="75-其他托管平台部署"&gt;7.5 其他托管平台部署
+&lt;/h3&gt;&lt;p&gt;如果要部署到其他静态托管服务（如 Vercel），需要确保平台安装了 Go：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Vercel 配置&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Build Command: &lt;code&gt;amazon-linux-extras install golang1.11 &amp;amp;&amp;amp; hugo --gc --minify&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;环境变量: &lt;code&gt;HUGO_VERSION&lt;/code&gt; 设置为最新的 Hugo extended 版本&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Node.js 20 环境&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Install Command: &lt;code&gt;dnf install -y golang&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="总结"&gt;总结
+&lt;/h2&gt;&lt;p&gt;使用 hugo-theme-stack-starter 大大简化了 Hugo 博客的搭建过程：&lt;/p&gt;
+&lt;h3 id="优势"&gt;优势
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;开箱即用&lt;/strong&gt;：包含完整的配置和示例内容&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Hugo Modules&lt;/strong&gt;：使用现代化的模块系统加载主题&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;GitHub Codespace 支持&lt;/strong&gt;：预配置开发环境，一键启动&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;自动化部署&lt;/strong&gt;：内置 GitHub Actions 工作流和定时更新&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;丰富功能&lt;/strong&gt;：搜索、评论、数学公式、代码高亮等&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;响应式设计&lt;/strong&gt;：适配各种设备&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;SEO 友好&lt;/strong&gt;：内置 SEO 优化配置&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="后续扩展"&gt;后续扩展
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;自定义主题样式和布局&lt;/li&gt;
+&lt;li&gt;添加更多内容类型（如项目展示、关于页面等）&lt;/li&gt;
+&lt;li&gt;集成第三方服务（统计、评论系统等）&lt;/li&gt;
+&lt;li&gt;优化网站性能和 SEO&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;注：这篇文章是在 GitHub Copilot 的协助下编写的，旨在提供清晰的 Hugo 博客搭建指南。如果您在实际操作中遇到任何问题，欢迎参考 &lt;a class="link" href="https://gohugo.io/documentation/" target="_blank" rel="noopener"
+&gt;Hugo 官方文档&lt;/a&gt;获取最新信息。&lt;/em&gt;&lt;/p&gt;</description></item></channel></rss>
