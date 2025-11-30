@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>WAQL on 梨梨的个人博客</title><link>https://xmimu.github.io/tags/waql/</link><description>Recent content in WAQL on 梨梨的个人博客</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 24 Oct 2025 21:55:50 +0800</lastBuildDate><atom:link href="https://xmimu.github.io/tags/waql/index.xml" rel="self" type="application/rss+xml"/><item><title>探索 WAQL：在 Wwise 项目中高效查询音频对象</title><link>https://xmimu.github.io/p/waql-intro-wwise-query-language/</link><pubDate>Fri, 24 Oct 2025 21:55:50 +0800</pubDate><guid>https://xmimu.github.io/p/waql-intro-wwise-query-language/</guid><description>&lt;p&gt;在大型音频项目中，仅靠手工在Wwise编辑器中点击、筛选对象，往往效率低、容易出错。为此，Wwise 提供了一个专门的查询语言：WAQL。它让你像使用 SQL、LINQ 那样，从项目中精准检索、过滤、提取对象，从而为自动化、脚本化流程奠定基础。本文将带你从基础语法入门，到关键运算、到进阶列表操作、再到实战建议。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="一-为什么需要-waql"&gt;一、 为什么需要 WAQL？
+&lt;/h2&gt;&lt;p&gt;Wwise 项目本质上是一个庞大的数据模型：包含成千上万的对象（Event、Sound、Bus、Container 等）、每个对象有大量属性（名称、音量、母线、子对象、父对象等）和引用关系。
+传统的 “List View 搜索”“Query Editor”虽然能做简单筛选，但面对复杂条件或大规模批量操作，就显得乏力。WAQL 的出现，就是为了：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;从项目的所有对象中，以一种声明式语言的方式筛选、定位目标。&lt;/li&gt;
+&lt;li&gt;不仅在编辑器里使用，也能与 Wwise Authoring API (WAAPI) 融合，在脚本／工具中调用。&lt;/li&gt;
+&lt;li&gt;提高音频集成、检视、清查流程的效率，降低人为出错。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;因此，如果你正在管理一个中大规模 Wwise 项目，或者希望通过脚本化方式加速音频资源管理、事件–声音关系检查、属性规范化，那么 WAQL 是一个值得掌握的工具。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="二-waql-的基本语法结构"&gt;二、 WAQL 的基本语法结构
+&lt;/h2&gt;&lt;p&gt;WAQL 查询通常以一个美元符号 &lt;code&gt;$&lt;/code&gt; 开头，这标示这是一个 WAQL 查询而非普通文本搜索。
+一个典型的查询结构可以抽象为：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ [from 起点] [where 条件] [select 变换]
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;其中：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;from 起点&lt;/strong&gt;：指定从哪一批对象开始。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;where 条件&lt;/strong&gt;：对起点／上一区间的对象进行筛选。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;select 变换&lt;/strong&gt;：从当前对象集合中提取／导航至其它关联对象。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果省略 &lt;code&gt;from&lt;/code&gt;，默认起点即为 “项目中的所有对象”。&lt;/p&gt;
+&lt;p&gt;例如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ where volume &amp;lt; 0
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;表示：从项目中所有对象出发，筛选音量小于 0 的对象。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="三-常用关键字详解"&gt;三、 常用关键字详解
+&lt;/h2&gt;&lt;h3 id="31-起点关键字--from"&gt;3.1 起点关键字 — &lt;code&gt;from&lt;/code&gt;
+&lt;/h3&gt;&lt;p&gt;起点用于限定查询范围，提高效率并更精准。常见形式：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;from type OBJECT_TYPE&lt;/code&gt;：比如 &lt;code&gt;from type Event&lt;/code&gt;，表示从 Event 类型对象集合出发。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;from object OBJECT_SPECIFIER&lt;/code&gt;：指定路径、GUID 或类名，如 &lt;code&gt;from object &amp;quot;\Actor-Mixer Hierarchy\Default Work Unit\Hello&amp;quot;&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;from search &amp;quot;TEXT&amp;quot;&lt;/code&gt;：在项目中按照名称或备注做文本搜索起点。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;使用 &lt;code&gt;from&lt;/code&gt; 明确类型或对象，有助于缩小起点规模，提高查询速度。&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ from type Sound
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;表示查找所有 Sound 类型对象。&lt;/p&gt;
+&lt;h3 id="32-筛选关键字--where"&gt;3.2 筛选关键字 — &lt;code&gt;where&lt;/code&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;where&lt;/code&gt; 用于对当前对象集合做布尔条件过滤。条件可涵盖数值比较、字符串匹配、属性／引用判断等。官方例子：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;$ where pitch = 1200&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$ where volume &amp;gt; -10 and volume &amp;lt; 0&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$ where name : &amp;quot;footstep&amp;quot;&lt;/code&gt;（使用子串匹配）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;关于字符串匹配：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;=&lt;/code&gt; 表示&lt;strong&gt;精确匹配&lt;/strong&gt;（忽略大小写）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;:&lt;/code&gt; 表示&lt;strong&gt;包含子串&lt;/strong&gt;（忽略大小写）
+还支持正则表达式（ECMAScript 风格）例如 &lt;code&gt;name = /^City.*Light$/&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;引用属性／对象关系时，可以用点操作符。例如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ where parent.name = &amp;#34;Music&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ where outputbus.parent.name = &amp;#34;Master Audio Bus&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="33-提取变换关键字--select"&gt;3.3 提取／变换关键字 — &lt;code&gt;select&lt;/code&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;select&lt;/code&gt; 用于从当前对象集合导航至相关对象或集合。例如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;select children&lt;/code&gt;：获取对象的直接子对象&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;select descendants&lt;/code&gt;：获取递归子对象&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;select parent&lt;/code&gt;：获取父对象&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;select ancestors&lt;/code&gt;：获取递归父对象&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;select referencesTo&lt;/code&gt;：获取引用到当前对象的其它对象&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ from type AudioFileSource where name : &amp;#34;footstep&amp;#34; select parent
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;表示：找所有名称包含 “footstep” 的音频文件源，然后选择其父对象。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;select&lt;/code&gt; 和 &lt;code&gt;where&lt;/code&gt; 可以在任意顺序组合，多个 &lt;code&gt;select&lt;/code&gt; 也可以串联。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="四-进阶特性列表操作与-waql-20"&gt;四、 进阶特性：列表操作与 WAQL 2.0
+&lt;/h2&gt;&lt;p&gt;随着 Wwise 2023.1 的更新，WAQL 引入了对对象**列表（Object List）**的原生支持，并新增了一系列函数：&lt;code&gt;count()&lt;/code&gt;, &lt;code&gt;any()&lt;/code&gt;, &lt;code&gt;all()&lt;/code&gt;, &lt;code&gt;first()&lt;/code&gt;, &lt;code&gt;last()&lt;/code&gt;, &lt;code&gt;take()&lt;/code&gt;, &lt;code&gt;skip()&lt;/code&gt;, &lt;code&gt;at()&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;例如，若你想找到所有带有 EQ 插件效果槽 (effect slot) 的对象，以前可能写：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ where effect0.pluginname : &amp;#34;EQ&amp;#34; or effect1.pluginname : &amp;#34;EQ&amp;#34; or …
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;新版改为：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ where effects.any(effect.pluginname : &amp;#34;eq&amp;#34;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;更简洁、可扩展。&lt;/p&gt;
+&lt;p&gt;列表函数使用举例：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;where children.count() &amp;gt; 3&lt;/code&gt;：子对象多于 3 个&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;select effects.take(2)&lt;/code&gt;：选择每个对象前两个效果槽&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;select children.skip(1)&lt;/code&gt;：跳过第一个子对象，选择其余&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这些增强让 WAQL 在复杂项目中、在自动化流程中更为强大。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="五-实用示例"&gt;五、 实用示例
+&lt;/h2&gt;&lt;p&gt;下面列举一些常见查询场景，便于你在实际项目中直接使用或改编：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;查找所有事件类型对象&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ from type Event
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;→ 列出项目中所有 Event 对象。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;查找音量低于 0 dB 的对象&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ where volume &amp;lt; 0
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;→ 从所有对象出发筛选。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;查找名称含 “Play” 的事件&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ from type Event where name : &amp;#34;Play&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;→ 使用子串匹配。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;查找所有带有 EQ 插件效果的对象（新版列表）&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ where effects.any(effect.pluginname : &amp;#34;eq&amp;#34;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;→ 利用列表函数。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;查找指定路径下音频源然后选其父对象&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ from object &amp;#34;\Actor-Mixer Hierarchy\Default Work Unit&amp;#34; select descendants where type = &amp;#34;AudioFileSource&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;→ 综合 from、select、where。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;通过 waapi-client 使用 WAQL 查询（Python 示例）&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;waapi&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;WaapiClient&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="n"&gt;WaapiClient&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;client&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;waql_query&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;$ from type Event where name : &amp;#39;Play&amp;#39;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;args&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;waql&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;waql_query&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;options&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;return&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;id&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;name&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;client&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;call&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;ak.wwise.core.object.get&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;→ 通过 waapi-client 库，使用 WAQL 查询所有名称包含“Play”的事件对象。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="六-建议实践与最佳思路"&gt;六、 建议实践与最佳思路
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;从小范围起步&lt;/strong&gt;：先从简单 &lt;code&gt;from type …&lt;/code&gt;、&lt;code&gt;where …&lt;/code&gt; 语句练习，当熟悉后再串联 &lt;code&gt;select&lt;/code&gt;、引用属性、列表函数。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;熟悉对象模型与属性名&lt;/strong&gt;：Wwise 每种对象类型（Sound、Event、Bus 等）有大量属性，建议参考官方 “Wwise Objects Reference”。 ([audiokinetic.com][3])&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;在编辑器里先试查&lt;/strong&gt;：可在 List View 或 Search 栏直接输入 &lt;code&gt;$ …&lt;/code&gt; 语句，快速看到结果，从而验证逻辑。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;脚本化流程中使用 WAQL 而非硬编码类型&lt;/strong&gt;：当结合 WAAPI 调用（如 &lt;code&gt;ak.wwise.core.object.get&lt;/code&gt;）时，使用 WAQL 更灵活、可维护。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;注意性能&lt;/strong&gt;：起点越宽（如 “所有对象”）或筛选越复杂、列表函数越多，查询耗时越高。尽量使用 &lt;code&gt;from type …&lt;/code&gt; 或 &lt;code&gt;from object …&lt;/code&gt; 限定起点。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;持续学习新版特性&lt;/strong&gt;：随着 Wwise 更新，WAQL 功能也在进化，例如列表函数、复杂返回表达式（别名、JSON 结构）等。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="七-总结"&gt;七、 总结
+&lt;/h2&gt;&lt;p&gt;WAQL 是一个专为 Wwise 项目而生的查询语言，让你在音频集成、资源管理、工具开发流程中，拥有比手工点击更高效、更精准、更可重复的手段。它的核心就是：&lt;strong&gt;起点 (from) → 筛选 (where) → 提取／变换 (select)&lt;/strong&gt;。掌握它之后，你可以快速定位对象、批量检测属性非法、搭建自动化脚本管线。随着版本进化，WAQL 也引入了列表函数、复杂返回结构，使得其在大型项目中更具实用价值。&lt;/p&gt;
+&lt;p&gt;如果你刚开始接触，建议从几个简单查询练习起，观察结果，再逐步改写更多复杂场景。相信在实际项目中，你会发现 WAQL 是提高效率、保持工程一致性的重要武器。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;参考网页：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.audiokinetic.com/en/blog/introducing-waql/" target="_blank" rel="noopener"
+&gt;https://www.audiokinetic.com/en/blog/introducing-waql/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.audiokinetic.com/library/2024.1.0_8669/?id=waql_introduction.html&amp;amp;source=SDK" target="_blank" rel="noopener"
+&gt;https://www.audiokinetic.com/library/2024.1.0_8669/?id=waql_introduction.html&amp;source=SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.audiokinetic.com/en/public-library/2024.1.8_8898/?id=waql_getting_started.html&amp;amp;source=SDK" target="_blank" rel="noopener"
+&gt;https://www.audiokinetic.com/en/public-library/2024.1.8_8898/?id=waql_getting_started.html&amp;source=SDK&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://medium.com/%40poly.izzzy/waql-tutorial-for-beginners-part-1-554171ee2fe4" target="_blank" rel="noopener"
+&gt;https://medium.com/%40poly.izzzy/waql-tutorial-for-beginners-part-1-554171ee2fe4&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.audiokinetic.com/en/blog/waql-2.0/" target="_blank" rel="noopener"
+&gt;https://www.audiokinetic.com/en/blog/waql-2.0/&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</description></item></channel></rss>
