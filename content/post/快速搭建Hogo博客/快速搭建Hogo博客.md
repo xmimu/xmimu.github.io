@@ -54,9 +54,9 @@ hugo-theme-stack-starter 已经包含了完整的配置结构，主要配置文�
 
 ```toml
 baseurl = "https://<用户名>.github.io"
-languageCode = "zh-cn"
+languageCode = "zh"
 title = "个人博客"
-defaultContentLanguage = "zh-cn"
+defaultContentLanguage = "zh"
 hasCJKLanguage = true
 ```
 
@@ -191,8 +191,8 @@ hugo mod tidy
 确保 `config/_default/config.toml` 中设置了：
 
 ```toml
-languageCode = "zh-cn"
-defaultContentLanguage = "zh-cn"
+languageCode = "zh"
+defaultContentLanguage = "zh"
 hasCJKLanguage = true
 ```
 
